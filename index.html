@@ -1,1 +1,390 @@
 <!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="chart.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Interface de controle</title>
+	<style>
+		*
+		{
+		    margin: 0px;padding: 0px;text-decoration: none;
+		    list-style: none;color: black;box-sizing: border-box;
+		}
+		body{background-color:black;padding: 10px;}
+		svg
+		{
+
+			width: 140px;
+			
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		circle
+		{
+			fill: none;
+			margin: 0px;
+			stroke-width:7;
+			stroke: blue;
+			stroke-dasharray: 377;
+			stroke-dashoffset: 0;
+			
+		}
+		
+		.section1
+		{
+			width: 100%;
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+			border-radius: 10px;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-around;
+		}
+		.contour
+		{
+			position: relative;
+			width: 48%;
+			margin: 5px;
+			border-radius: 10px;
+			border: solid 1px white;
+			padding-top: 10px;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			
+		}
+		.contour h2
+		{
+			width: 90%;
+			text-align: center;
+			color: white;
+			font-family: sans-serif;
+			
+		}
+		.contour span
+		{
+			color: white;
+			font-family: sans-serif;
+			position: absolute;
+			font-size: 1.8em;
+			
+		}
+		.contour span strong
+		{
+			color: white;
+			font-size: 0.6em;
+			
+		}
+		.contour div
+		{
+			height: 40vh;
+			position: relative;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			
+		}
+		.graphe
+		{
+			width: 25%;
+		}
+		.courbe
+		{
+			width: 70%;
+		}
+		.cerl
+		{
+			stroke:silver;
+			stroke-width:6;
+			stroke-dasharray: 377;
+		}
+		p{color: white;}
+		canvas {
+			width: 300px;
+			height: 200px;
+        }
+	</style>
+</head>
+<body>
+
+	
+	<div class="section1">
+
+		<div class="contour">
+			<h2>Temperat</h2>
+			
+			<div class="graphe">
+				<span id="vtemperature">38°</span>
+				<svg>
+					<circle class="cerl" cx="50%" cy="50%" r="60"></circle>
+					<circle id="temperature1" cx="50%" cy="50%" r="60"></circle>
+
+				</svg>
+				
+			</div>
+			<div class="courbe">
+		
+				<canvas id="voltageTemperatureChart"></canvas>
+
+			</div>
+			
+		</div>
+		<div class="contour">
+			<h2>Tension</h2>
+			
+			<div class="graphe">
+				<span id="vtension">5V</span>
+				<svg>
+				
+					<circle class="cerl" cx="50%" cy="50%" r="60"></circle>
+					<circle id="tension1" cx="50%" cy="50%" r="60"></circle>
+					
+				</svg>
+			</div>
+			<div class="courbe">
+		
+				<canvas id="voltage"></canvas>
+
+			</div>
+			
+		</div>
+		<div class="contour">
+			<h2>Intensite</h2>
+			
+			<div class="graphe">
+				<span id="vintensite">1A</span>
+				<svg>
+				
+					<circle class="cerl" cx="50%" cy="50%" r="60"></circle>
+					<circle id="intensite1" cx="50%" cy="50%" r="60"></circle>
+					
+				</svg>
+			</div>
+			<div class="courbe">
+		
+				<canvas id="intensite"></canvas>
+
+			</div>
+		</div>
+		<div class="contour">
+			<h2>Ripple</h2>
+			
+			<div class="graphe">
+				<span id="vbruit">90%</span>
+				<svg>
+				
+					<circle class="cerl" cx="50%" cy="50%" r="60"></circle>
+					<circle id="rendement1" cx="50%" cy="50%" r="60"></circle>
+					
+				</svg>
+			</div>
+			<div class="courbe">
+		
+				<canvas id="bruits"></canvas>
+
+			</div>
+		</div>
+		
+	</div>
+	
+<script>
+    const temps = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];  // en degrés Celsius
+    const temperatureData = [2, 7, 12, 16, 27, 32, 37, 37, 37, 37, 37, 37];  // en volts
+    const voltageData = [5, 5, 5, 5, 5, 4.5, 4, 4, 4, 4, 4];  // en volts
+    const intensiteData = [1, 1, 1, 1, 1, 0.9, 0.8, 0.8, 0.8, 0.8, 0.8];  // en volts
+    const rippleData = [100, 100, 100, 100, 100, 120, 125, 130, 130, 130, 130];  // en volts
+
+    var ctx = document.getElementById('voltageTemperatureChart').getContext('2d');
+    var voltageTemperatreChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: temps,
+            datasets: [{
+                label: 'Température (°C)',
+                data: temperatureData,
+                fill: false,
+                borderColor: 'white',
+                borderWidth: 2,
+                pointBackgroundColor: 'red',
+                pointRadius: 3
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Temps (m)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Température (°C)'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    var ctx = document.getElementById('voltage').getContext('2d');
+    var voltageTemperatreChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: temps,
+            datasets: [{
+                label: 'Tension (V)',
+                data: voltageData,
+                fill: false,
+                borderColor: 'white',
+                borderWidth: 2,
+                pointBackgroundColor: 'red',
+                pointRadius: 3
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Temps (m)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Tension (V)'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    var ctx = document.getElementById('intensite').getContext('2d');
+    var voltageTemperatreChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: temps,
+            datasets: [{
+                label: 'Intensite (A)',
+                data: intensiteData,
+                fill: false,
+                borderColor: 'white',
+                borderWidth: 2,
+                pointBackgroundColor: 'red',
+                pointRadius: 3
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Temps (m)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Intensite (A)'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+		
+	var ctx = document.getElementById('bruits').getContext('2d');
+    var voltageTemperatreChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: temps,
+            datasets: [{
+                label: 'Bruits (mV)',
+                data: rippleData,
+                fill: false,
+                borderColor: 'white',
+                borderWidth: 2,
+                pointBackgroundColor: 'red',
+                pointRadius: 3
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Temps (m)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Bruits (mV)'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+		
+		var temp=document.getElementById("temperature1");
+		var tens=document.getElementById("tension1");
+		var inte=document.getElementById("intensite1");
+		var rend=document.getElementById("rendement1");
+		
+		var vtemperature=document.getElementById("vtemperature");
+		var vtension=document.getElementById("vtension");
+		var vintensite=document.getElementById("vintensite");
+		var vbruit=document.getElementById("vbruit");
+		function LesDonner() 
+		{
+			const xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() 
+			{
+				if (this.readyState == 4 && this.status == 200) 
+				{
+					var reponse=JSON.parse(this.responseText);
+					var reponsetemp=reponse.temperature
+					var reponsetens=reponse.tension;
+					var reponseinte=reponse.intensite
+					var reponserend=reponse.bruits;
+					vtemperature.innerHTML = reponsetemp+'°';
+					reponsetemp=((100-reponsetemp)*377)/100;
+				    temp.style.strokeDashoffset=reponsetemp;
+				    
+				    vtension.innerHTML = reponsetens+'<strong>V/24</strong>';
+					reponsetens=((24-reponsetens)*377)/24;
+				    tens.style.strokeDashoffset=reponsetens;
+
+				    vintensite.innerHTML = reponseinte+'<strong>A/10</strong>';
+					reponseinte=((10-reponseinte)*377)/10;
+				    inte.style.strokeDashoffset=reponseinte;
+
+				    vbruit.innerHTML = reponserend+'<strong>mV/1v</strong>';
+					reponserend=((1000-reponserend)*377)/1000;
+				    rend.style.strokeDashoffset=reponserend;
+				}
+			};
+			  xhttp.open("GET", "recup.php");
+			  xhttp.send();
+
+
+		}
+		
+			setInterval('LesDonner()',2000);
+		
+		
+	</script>
+	
+
+</body>
+</html>
